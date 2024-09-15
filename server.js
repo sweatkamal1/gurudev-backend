@@ -17,12 +17,12 @@ const app = express();
 // Middleware
 app.use(express.json()); // For parsing JSON requests
 
-// Allowed origins for CORS
-const allowedOrigins = ['https://gurudev-frontend-a9tw.vercel.app/', ];
+// Allowed origins for CORS (without trailing slash)
+const allowedOrigins = ['https://gurudev-frontend-a9tw.vercel.app'];
 
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow requests with no origin like mobile apps or curl requests
+    // Allow requests with no origin, such as mobile apps or curl requests
     if (!origin || allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
