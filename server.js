@@ -17,19 +17,28 @@ const app = express();
 // Middleware
 app.use(express.json()); // For parsing JSON requests
 
-// Allowed origins for CORS (without trailing slash)
+// Allowed origins for CORS
 const allowedOrigins = ['https://gurudev-frontend-a9tw.vercel.app'];
 
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow requests with no origin, such as mobile apps or curl requests
+    // Allow requests with no origin like mobile apps or curl requests
     if (!origin || allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
     }
   },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow specific HTTP methods
   credentials: true // Allows cookies and authentication tokens to be sent
+}));
+
+// Handle preflight requests
+app.options('*', cors({
+  origin: allowedOrigins[0], // Set the allowed origin for preflight requests
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
 // Routes
