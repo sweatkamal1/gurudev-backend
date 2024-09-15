@@ -20,33 +20,36 @@ app.use(express.json()); // For parsing JSON requests
 // Allowed origins for CORS
 const allowedOrigins = ['https://gurudev-frontend-a9tw.vercel.app'];
 
+// CORS configuration
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow requests with no origin like mobile apps or curl requests
+    // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin || allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
     }
   },
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow specific HTTP methods
-  credentials: true // Allows cookies and authentication tokens to be sent
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allowed HTTP methods
+  credentials: true, // Allows cookies and authentication tokens
+  allowedHeaders: ['Content-Type', 'Authorization'] // Allowed headers
 }));
 
-// Handle preflight requests
-app.options('*', cors({
-  origin: allowedOrigins[0], // Set the allowed origin for preflight requests
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-}));
+// Handle preflight OPTIONS requests
+app.options('*', (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', allowedOrigins[0]);
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  res.sendStatus(200); // Return OK status for preflight
+});
 
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/payment', paymentRoutes); // Payment routes (Braintree, etc.)
 app.use('/api/shipping', shippingRoutes); // Shipping routes
 
-// Error handling middleware (optional but useful for debugging)
+// Error handling middleware (optional)
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({
