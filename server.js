@@ -18,7 +18,7 @@ const app = express();
 app.use(express.json()); // For parsing JSON requests
 
 // Allowed origins for CORS
-const allowedOrigins = ['http://localhost:3000', ];
+const allowedOrigins = ['https://gurudev-frontend-a9tw.vercel.app/', ];
 
 app.use(cors({
   origin: function (origin, callback) {
