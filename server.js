@@ -23,33 +23,31 @@ const allowedOrigins = ['https://gurudev-frontend-a9tw.vercel.app'];
 // CORS configuration
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin || allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
     }
   },
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allowed HTTP methods
-  credentials: true, // Allows cookies and authentication tokens
-  allowedHeaders: ['Content-Type', 'Authorization'] // Allowed headers
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  credentials: true
 }));
 
-// Handle preflight OPTIONS requests
+// Enable pre-flight for all routes
 app.options('*', (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', allowedOrigins[0]);
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Origin', 'https://gurudev-frontend-a9tw.vercel.app');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   res.setHeader('Access-Control-Allow-Credentials', 'true');
-  res.sendStatus(200); // Return OK status for preflight
+  res.sendStatus(200); // Send HTTP OK status for preflight requests
 });
 
 // Routes
 app.use('/api/auth', authRoutes);
-app.use('/api/payment', paymentRoutes); // Payment routes (Braintree, etc.)
-app.use('/api/shipping', shippingRoutes); // Shipping routes
+app.use('/api/payment', paymentRoutes);
+app.use('/api/shipping', shippingRoutes);
 
-// Error handling middleware (optional)
+// Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({
